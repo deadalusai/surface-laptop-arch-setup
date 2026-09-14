@@ -106,9 +106,8 @@ rootpass_selector () {
 secureboot_selector () {
     input_print "Enable Secure Boot (Microsoft signing keys)? [y/N]: "
     read -r secureboot_response
-    if ! [[ "$secureboot_response" =~ ^(yes|y)$ ]]; then
+    if [[ "$secureboot_response" =~ ^(yes|y)$ ]]; then
         secureboot_response = 'yes'
-        exit
     fi
 }
 
@@ -413,5 +412,6 @@ info_print "Enabling colours, animations, and parallel downloads for pacman."
 sed -Ei 's/^#(Color)$/\1\nILoveCandy/;s/^#(ParallelDownloads).*/\1 = 10/' /mnt/etc/pacman.conf
 
 # Finishing up.
-info_print "Done, you may now wish to reboot (further changes can be done by arch-chroot'ing into /mnt)."
+info_print "Done. Further changes can be done by \`arch-chroot\`ing into /mnt."
+info_print "When ready, type \`reboot\` to restart"
 exit
