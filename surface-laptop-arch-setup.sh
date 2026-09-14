@@ -102,16 +102,6 @@ rootpass_selector () {
     return 0
 }
 
-# Determine if the user wants to enable secure boot
-secureboot_selector () {
-    input_print "Enable Secure Boot (Microsoft signing keys)? [y/N]:"
-    read -r secureboot_response
-    if ! [[ "$secureboot_response" =~ ^(yes|y)$ ]]; then
-        secureboot_response = 'yes'
-        exit
-    fi
-}
-
 # Microcode detector (function).
 microcode_detector () {
     CPU=$(grep vendor_id /proc/cpuinfo)
@@ -201,9 +191,6 @@ disk_selector
 # Setting up the kernel.
 until kernel_selector; do : ; done
 
-# Select whether to enable secure boot
-secureboot_selector
-
 # User choses the locale.
 until locale_selector; do : ; done
 
@@ -215,7 +202,7 @@ until userpass_selector; do : ; done
 until rootpass_selector; do : ; done
 
 # Warn user about deletion of old partition scheme.
-input_print "This will delete the current partition table on $DISK once installation starts. Continue? [y/N]:"
+input_print "This will delete the current partition table on $DISK once installation starts. Do you agree [y/N]?: "
 read -r disk_response
 if ! [[ "${disk_response,,}" =~ ^(yes|y)$ ]]; then
     error_print "Quitting."
@@ -269,14 +256,11 @@ base_packages=(
     linux-firmware
     "$microcode"
     networkmanager
+    sbctl
     plymouth
     msedit
     sudo
 )
-
-if [[ $secureboot_response = yes ]]; then
-    base_packages+=(sbctl)
-fi
 
 if [[ "$kernel" == "linux-surface" ]]; then
     info_print "Adding linux-surface kernel repository."
@@ -378,22 +362,14 @@ options root=PARTUUID=$(blkid -s PARTUUID -o value "$ROOTFS") rw
 TEXT
 EOF
 
-
-if [[ $secureboot_response = yes ]]; then
-    
 # Configuring secure boot
 info_print "Setting up Secure Boot"
 arch-chroot -S /mnt /bin/bash -e <<EOF
-# Enroll secure boot keys
+# Configure keys
 sbctl create-keys
 sbctl enroll-keys --microsoft
-# Sign boot images
-sbctl sign /boot/EFI/BOOT/BOOTX64.EFI
-sbctl sign /boot/EFI/systemd/systemd-bootx64.efi
-sbctl sign /boot/vmlinuz-${kernel}
-EOF
 
-fi
+EOF
 
 # Setting root password.
 info_print "Setting root password."
