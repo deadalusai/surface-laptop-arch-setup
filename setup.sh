@@ -374,7 +374,7 @@ title Arch (${kernel})
 linux /vmlinuz-${kernel}
 initrd /${microcode}.img
 initrd /initramfs-${kernel}.img
-options root=PARTUUID=$(blkid -s PARTUUID -o value "$ROOTFS") rw
+options root=PARTUUID=$(blkid -s PARTUUID -o value "$ROOTFS") rw loglevel=3 quiet splash
 TEXT
 EOF
 
