@@ -14,6 +14,8 @@ Easy Arch sets a more secure system by default (BTRFS, LUKS2 Encryption), so re-
 3. Follow the instructions.
 4. Reboot with `reboot`.
 
+After rebooting, you should boot into a new Arch installation.
+
 ## Filesystem
 
 This script sets up an `ext4` root filesystem with a `Fat32`-formatted EFI boot partition and a swap partition.
@@ -24,11 +26,15 @@ This script is trimmed down to install and configure a specific software set:
 
 - *Kernel*
   This script installs the [surface-linux](https://github.com/linux-surface/linux-surface) kernel which 
-  includes patches to support Surface devices. It also installs the standard Arch Linux kernel as a fallback option.
+  includes patches to support Surface devices. 
+  
+  It can also install the standard Arch Linux kernel as an alternative option.
     
 - *Boot Manager*
   This script installs [systemd-boot](https://wiki.archlinux.org/title/Systemd-boot) as the boot manager.
   It also installs [plymouth](https://wiki.archlinux.org/title/Plymouth) for a nice boot splash-screen experience.
+  
+  Optionally, it will configure and enable secure-boot.
   
 - *Networking*
   This script installs [Network Manager](https://wiki.archlinux.org/title/NetworkManager).
@@ -36,14 +42,28 @@ This script is trimmed down to install and configure a specific software set:
 
 (Þ) This works around an issue with gpg being unable to resolve DNS queries due to relying directly on `/etc/resolv.conf`.
 
-## Desktop Experience
-
-This script installs the latest Gnome DE, with some unwanted packages removed and some custom configurations pre-applied.
-
 ## User Software
 
 This script also installs the following user software:
 
-- *1Password* [Flathub](https://flathub.org/en/apps/com.onepassword.OnePassword)
-- *Dropbox*   [Flathub](https://flathub.org/en/apps/com.dropbox.Client)
-- *MS Edit*   [Github](https://github.com/microsoft/edit)
+- [MS Edit](https://github.com/microsoft/edit) as the default command-line editing tool, with the alias `edit`.
+
+## Desktop Experience
+
+After installation, log in and install a desktop experience:
+
+### Gnome
+
+```
+pacman -S gnome
+systemctl enable gdm
+reboot
+```
+
+### KDE Plasma
+
+```
+pacman -S plasma
+systemctl enable plasmalogin
+reboot
+```
