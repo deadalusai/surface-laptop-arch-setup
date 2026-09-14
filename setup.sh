@@ -104,7 +104,7 @@ rootpass_selector () {
 
 # Determine if the user wants to enable secure boot
 secureboot_selector () {
-    input_print "Enable Secure Boot (Microsoft signing keys)? [y/N]:"
+    input_print "Enable Secure Boot (Microsoft signing keys)? [y/N]: "
     read -r secureboot_response
     if ! [[ "$secureboot_response" =~ ^(yes|y)$ ]]; then
         secureboot_response = 'yes'
@@ -215,7 +215,7 @@ until userpass_selector; do : ; done
 until rootpass_selector; do : ; done
 
 # Warn user about deletion of old partition scheme.
-input_print "This will delete the current partition table on $DISK once installation starts. Continue? [y/N]:"
+input_print "This will delete the current partition table on $DISK once installation starts. Continue? [y/N]: "
 read -r disk_response
 if ! [[ "${disk_response,,}" =~ ^(yes|y)$ ]]; then
     error_print "Quitting."
